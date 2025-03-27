@@ -37,6 +37,9 @@
 mod bindings;
 /// Test utilities for fuzzing
 pub mod test_utils;
+/// WebAssembly bindings
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
 
 use std::{convert::TryFrom, num::TryFromIntError, ptr, sync::Arc};
 
@@ -60,7 +63,7 @@ use bindings::{
     RANDOMX_HASH_SIZE,
 };
 use bitflags::bitflags;
-use libc::{c_ulong, c_void};
+use std::ffi::{c_ulong, c_void};
 use thiserror::Error;
 
 use crate::bindings::{
@@ -262,9 +265,9 @@ impl RandomXDataset {
             x => {
                 // This weirdness brought to you by c_ulong being different on Windows and Linux
                 #[cfg(target_os = "windows")]
-                return Ok(x);
+                return Ok(x as u32);
                 #[cfg(not(target_os = "windows"))]
-                return Ok(u32::try_from(x)?);
+                return Ok(x as u32); // Just use a cast for wasm32 target
             },
         }
     }
@@ -279,7 +282,8 @@ impl RandomXDataset {
             let mut result: Vec<u8> = vec![0u8; count];
             let n = usize::try_from(self.inner.dataset_count)?;
             unsafe {
-                libc::memcpy(result.as_mut_ptr() as *mut c_void, memory, n);
+                // Use core::ptr::copy_nonoverlapping instead of libc::memcpy
+                core::ptr::copy_nonoverlapping(memory as *const u8, result.as_mut_ptr(), n);
             }
             Ok(result)
         }

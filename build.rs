@@ -37,6 +37,17 @@ fn main() {
     let repo_dir = PathBuf::from(env::var("RANDOMX_DIR").unwrap_or_else(|_| format!("{}/RandomX", &cargo_dir)));
     let build_dir = &project_dir.join("randomx_build");
 
+    let host = env::var("HOST").unwrap();
+    // println!("host: {}", host);
+    let target = env::var("TARGET").unwrap();
+    // println!("target: {}", target);
+
+    // Skip native building for wasm targets
+    if target.contains("wasm32") {
+        // Don't manually set the target_arch as it's handled by rustc
+        return;
+    }
+
     env::set_current_dir(Path::new(&repo_dir)).unwrap(); // change current path to repo for dependency build
     match fs::create_dir_all(build_dir) {
         Ok(_) => (),
@@ -46,11 +57,6 @@ fn main() {
         },
     }
     env::set_current_dir(build_dir).unwrap();
-
-    let host = env::var("HOST").unwrap();
-    // println!("host: {}", host);
-    let target = env::var("TARGET").unwrap();
-    // println!("target: {}", target);
     if host.contains("windows") && target.contains("windows-msvc") {
         let mut err_1 = "".to_string();
         let mut err_2 = "".to_string();

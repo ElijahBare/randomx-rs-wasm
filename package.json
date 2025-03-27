@@ -1,0 +1,28 @@
+{
+  "name": "randomx-rs-wasm",
+  "version": "1.0.0",
+  "description": "WebAssembly bindings for the RandomX proof-of-work (PoW) system",
+  "main": "index.js",
+  "scripts": {
+    "build": "wasm-pack build --target web",
+    "start": "npx serve .",
+    "start:miner": "npm run build && npx serve .",
+    "start:dev": "npx concurrently \"wasm-pack build --target web --dev\" \"npx serve .\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "randomx",
+    "wasm",
+    "proof-of-work",
+    "crypto",
+    "webassembly",
+    "monero",
+    "xmr"
+  ],
+  "author": "The Tari Development Community",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "serve": "^14.2.0"
+  }
+}

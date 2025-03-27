@@ -20,7 +20,7 @@
 // WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-use libc::{c_uint, c_ulong, c_void};
+use std::ffi::{c_uint, c_ulong, c_void};
 pub const RANDOMX_HASH_SIZE: u32 = 32;
 
 #[repr(C)]
@@ -80,8 +80,7 @@ extern "C" {
 #[cfg(test)]
 mod tests {
     use std::ptr;
-
-    use libc::{c_uint, c_void};
+    use std::ffi::{c_uint, c_void};
 
     use super::*;
 
